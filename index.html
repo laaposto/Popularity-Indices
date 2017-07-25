@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Popularity Indices</title>
+    <meta charset="utf-8">
+    <meta name="description" content="Visualize Reddit News Data">
+    <meta name="robots" content="index, follow"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="author" content="laaposto">
+
+    <link rel="shortcut icon" href="imgs/favicon.ico"/>
+
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,700|Roboto+Slab:400,300,700&subset=latin,cyrillic-ext,greek-ext,greek,latin-ext,cyrillic'
+          rel='stylesheet' type='text/css'>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/foundation.css">
+    <link rel="stylesheet" href="css/main.css">
+    <!--END CSS -->
+
+</head>
+<body>
+<div id="loading">
+    <img src="imgs/loading.svg" width="256" height="32">
+
+    <h1>Loading...</h1>
+</div>
+<div class="menu_left">
+    <nav class="menu">
+        <h3 id="posts">POSTS</h3>
+
+        <div class="post_list"></div>
+    </nav>
+    <button class="close-button" id="close-button"></button>
+</div>
+<button class="open-button" id="open-button"></button>
+
+<div class="row fullWidth" style="display: none">
+    <header class="top-nav">
+        <div class="top-nav-inner"><span id="title"></span><a href="#" id="post" target="_blank"><img class="link_icon"
+                                                                                                      src="imgs/link_icon.png"/></a>
+        </div>
+    </header>
+</div>
+<div class="row bigWidth" style="display: none">
+    <div class="small-12 medium-6 large-3 columns">
+        <div class="main-box">
+            <span class="headline">User Count</span>
+            <span class="value" id="value_users">0</span>
+            <span class="desc">The predicted saturated number of eponymous users in the discussion.</span>
+        </div>
+    </div>
+    <div class="small-12 medium-6 large-3 columns">
+        <div class="main-box">
+            <span class="headline">Comment Count</span>
+            <span class="value" id="value_comments">0</span>
+            <span class="desc">The predicted saturated number of comments in the discussion.</span>
+        </div>
+    </div>
+    <div class="small-12 medium-6 large-3 columns">
+        <div class="main-box">
+            <span class="headline">Popularity</span>
+            <span class="value" id="value_score">0</span>
+            <span class="desc">The predicted saturated number of upvotes minus downvotes (value penalized for few votes).</span>
+        </div>
+    </div>
+    <div class="small-12 medium-6 large-3 columns">
+        <div class="main-box">
+            <span class="headline">Controversiality</span>
+            <span class="value" id="value_contro">0</span>
+            <span class="desc">The predicted saturated number of vote disagreements (value penalized for few votes).</span>
+        </div>
+    </div>
+</div>
+<div class="row fullWidth" style="display: none">
+    <section class="timeline_wrapper">
+        <div class="timeline">
+            <div class="events-wrapper">
+                <div class="events">
+                    <ol>
+                        <li><a href="#" id="date1" class="selected"></a></li>
+                        <li><a href="#" id="date2">10 min 17 secs</a></li>
+                        <li><a href="#" id="date3">20 min 35 secs</a></li>
+                        <li><a href="#" id="date4">30 min 53 secs</a></li>
+                        <li><a href="#" id="date5">41 min 11 secs</a></li>
+                        <li><a href="#" id="date6">51 min 28 secs</a></li>
+                        <li><a href="#" id="date7">1 hr 1 min</a></li>
+                        <li><a href="#" id="date8">1 hr 12 min</a></li>
+                        <li><a href="#" id="date9">1 hr 22 min</a></li>
+                        <li><a href="#" id="date10">1 hr 32 min</a></li>
+                        <li><a href="#" id="date11">1 hr 42 min</a></li>
+                        <li><a href="#" id="date12">1 hr 53 min</a></li>
+                        <li><a href="#" id="date13">2 hr 3 min</a></li>
+                        <li><a href="#" id="date14">2 hr 13 min</a></li>
+                        <li><a href="#" id="date15">2 hr 24 min</a></li>
+                    </ol>
+                    <span class="filling-line" aria-hidden="true"></span>
+                </div>
+            </div>
+            <ul class="timeline-navigation">
+                <li><a href="#" class="prev inactive">Prev</a></li>
+                <li><a href="#" class="next">Next</a></li>
+            </ul>
+        </div>
+    </section>
+</div>
+<div class="row fullWidth" style="display: none; margin-top: -30px;">
+    <div class="small-12 medium-12 large-12 columns">
+        <div id="ca-container" class="ca-container">
+            <div class="ca-wrapper">
+                <div class="ca-item">
+                    <div class="ca-item-main">
+                        <span class="headline">User Graph Hirsch</span>
+
+                        <div class="tooltip"><img src="imgs/info.png"/>
+                            <span class="tooltip_text desc"><h3>User Graph Hirsch</h3>The node/degree h-index of the user graph. A high value indicates a large number of active users.</span>
+                        </div>
+                        <span class="value" id="value1">0</span>
+                    </div>
+                </div>
+                <div class="ca-item">
+                    <div class="ca-item-main">
+                        <span class="headline">Norm. Indegree Entropy</span>
+
+                        <div class="tooltip"><img src="imgs/info.png"/>
+                            <span class="tooltip_text desc"><h3>Norm. Indegree Entropy</h3>The normalized user indegree distribution entropy in the user graph. A high value indicates a large number of multiply replied-to users.</span>
+                        </div>
+                        <span class="value" id="value2">0</span>
+                    </div>
+                </div>
+                <div class="ca-item">
+                    <div class="ca-item-main">
+                        <span class="headline">Comment Count</span>
+
+                        <div class="tooltip"><img src="imgs/info.png"/>
+                            <span class="tooltip_text desc"><h3>Comment Count</h3>The number of comments in the discussion at the time of the snapshot.</span>
+                        </div>
+                        <span class="value" id="value3">0</span>
+                    </div>
+                </div>
+                <div class="ca-item">
+                    <div class="ca-item-main">
+                        <span class="headline">Comment Tree Randic</span>
+
+                        <div class="tooltip"><img src="imgs/info.png"/>
+                            <span class="tooltip_text desc"><h3>Comment Tree Randic</h3>The Randic index of the comment tree. A high value indicates great branching complexity in the tree.</span>
+                        </div>
+                        <span class="value" id="value4">0</span>
+                    </div>
+                </div>
+                <div class="ca-item">
+                    <div class="ca-item-main">
+                        <span class="headline">Avg. Depth</span>
+
+                        <div class="tooltip"><img src="imgs/info.png"/>
+                            <span class="tooltip_text desc"><h3>Avg. Depth</h3>The average node depth in the comment tree.</span>
+                        </div>
+                        <span class="value" id="value5">0</span>
+                    </div>
+                </div>
+                <div class="ca-item">
+                    <div class="ca-item-main">
+                        <span class="headline">Time Differences Std.</span>
+
+                        <div class="tooltip"><img src="imgs/info.png"/>
+                            <span class="tooltip_text desc"><h3>Time Differences Std.</h3>The standard deviation of the between comment timestamp differences.</span>
+                        </div>
+                        <span class="value" id="value6">0</span>
+                    </div>
+                </div>
+                <div class="ca-item">
+                    <div class="ca-item-main">
+                        <span class="headline">Last Comment Lifetime</span>
+
+                        <div class="tooltip"><img src="imgs/info.png"/>
+                            <span class="tooltip_text desc"><h3>Last Comment Lifetime</h3>The difference between the last comment's and the initial post's timestamps.</span>
+                        </div>
+                        <span class="value" id="value7">0</span>
+                    </div>
+                </div>
+                <div class="ca-item">
+                    <div class="ca-item-main">
+                        <span class="headline">Max Width</span>
+
+                        <div class="tooltip"><img src="imgs/info.png"/>
+                            <span class="tooltip_text desc"><h3>Max Width</h3>The maximum size of a depth level in the comment tree.</span>
+                        </div>
+                        <span class="value" id="value8">0</span>
+                    </div>
+                </div>
+                <div class="ca-item">
+                    <div class="ca-item-main">
+                        <span class="headline">User Graph Randic</span>
+
+                        <div class="tooltip"><img src="imgs/info.png"/>
+                            <span class="tooltip_text desc"><h3>User Graph Randic</h3>The Randic index of the user graph. A high value indicates great branching complexity in the graph.</span>
+                        </div>
+                        <span class="value" id="value9">0</span>
+                    </div>
+                </div>
+                <div class="ca-item">
+                    <div class="ca-item-main">
+                        <span class="headline">Max Depth over Max Width</span>
+
+                        <div class="tooltip"><img src="imgs/info.png"/>
+                            <span class="tooltip_text desc"><h3>Max Depth over Max Width</h3>The maximum depth over the maximum width ratio in the comment tree.</span>
+                        </div>
+                        <span class="value" id="value10">0</span>
+                    </div>
+                </div>
+                <div class="ca-item">
+                    <div class="ca-item-main">
+                        <span class="headline">Max Depth</span>
+
+                        <div class="tooltip"><img src="imgs/info.png"/>
+                            <span class="tooltip_text desc"><h3>Max Depth</h3>The maximum node depth in the comment tree.</span>
+                        </div>
+                        <span class="value" id="value11">0</span>
+                    </div>
+                </div>
+                <div class="ca-item">
+                    <div class="ca-item-main">
+                        <span class="headline">Avg. Time Differences (2nd Half)</span>
+
+                        <div class="tooltip"><img src="imgs/info.png"/>
+                            <span class="tooltip_text desc"><h3>Avg. Time Differences (2nd Half)</h3>The average of the second half of between comment timestamp differences.</span>
+                        </div>
+                        <span class="value" id="value12">0</span>
+                    </div>
+                </div>
+                <div class="ca-item">
+                    <div class="ca-item-main">
+                        <span class="headline">User Count</span>
+
+                        <div class="tooltip"><img src="imgs/info.png"/>
+                            <span class="tooltip_text desc"><h3>User Count</h3>The number of eponymous users in the discussion at the time of the snapshot.</span>
+                        </div>
+                        <span class="value" id="value14">0</span>
+                    </div>
+                </div>
+                <div class="ca-item">
+                    <div class="ca-item-main">
+                        <span class="headline">Avg. Width</span>
+
+                        <div class="tooltip"><img src="imgs/info.png"/>
+                            <span class="tooltip_text desc"><h3>Avg. Width</h3>The average size of depth levels in the comment tree.</span>
+                        </div>
+                        <span class="value" id="value15">0</span>
+                    </div>
+                </div>
+                <div class="ca-item">
+                    <div class="ca-item-main">
+                        <span class="headline">Avg. Depth over Width</span>
+
+                        <div class="tooltip"><img src="imgs/info.png"/>
+                            <span class="tooltip_text desc"><h3>Avg. Depth over Width</h3>The average of depth over width ratios for every depth level in the comment tree.</span>
+                        </div>
+                        <span class="value" id="value16">0</span>
+                    </div>
+                </div>
+                <div class="ca-item">
+                    <div class="ca-item-main">
+                        <span class="headline">Comment Tree Hirsch</span>
+
+                        <div class="tooltip"><img src="imgs/info.png"/>
+                            <span class="tooltip_text desc"><h3>Comment Tree Hirsch</h3>The depth/width h-index of the comment tree. A high value indicates both a deep and wide tree.</span>
+                        </div>
+                        <span class="value" id="value17">0</span>
+                    </div>
+                </div>
+                <div class="ca-item">
+                    <div class="ca-item-main">
+                        <span class="headline">Indegree Entropy</span>
+
+                        <div class="tooltip"><img src="imgs/info.png"/>
+                            <span class="tooltip_text desc"><h3>Indegree Entropy</h3>The user indegree distribution entropy in the user graph. A high value indicates a large number of multiply replied-to users.</span>
+                        </div>
+                        <span class="value" id="value18">0</span>
+                    </div>
+                </div>
+                <div class="ca-item">
+                    <div class="ca-item-main">
+                        <span class="headline">Avg. Time Differences (1st Half)</span>
+
+                        <div class="tooltip"><img src="imgs/info.png"/>
+                            <span class="tooltip_text desc"><h3>Avg. Time Differences (1st Half)</h3>The average of the first half of between comment timestamp differences.</span>
+                        </div>
+                        <span class="value" id="value19">0</span>
+                    </div>
+                </div>
+                <div class="ca-item">
+                    <div class="ca-item-main">
+                        <span class="headline">Norm. Outdegree Entropy</span>
+
+                        <div class="tooltip"><img src="imgs/info.png"/>
+                            <span class="tooltip_text desc"><h3>Norm. Outdegree Entropy</h3>The normalized user outdegree distribution entropy in the user graph. A high value indicates a large number of actively replying users.</span>
+                        </div>
+                        <span class="value" id="value20">0</span>
+                    </div>
+                </div>
+                <div class="ca-item">
+                    <div class="ca-item-main">
+                        <span class="headline">Comment Tree Wiener</span>
+
+                        <div class="tooltip"><img src="imgs/info.png"/>
+                            <span class="tooltip_text desc"><h3>Comment Tree Wiener</h3>The average of all node distances in the comment tree. A high value indicates multiple long threads.</span>
+                        </div>
+                        <span class="value" id="value21">0</span>
+                    </div>
+                </div>
+                <div class="ca-item">
+                    <div class="ca-item-main">
+                        <span class="headline">Outdegree Entropy</span>
+
+                        <div class="tooltip"><img src="imgs/info.png"/>
+                            <span class="tooltip_text desc"><h3>Outdegree Entropy</h3>The user outdegree distribution entropy in the user graph. A high value indicates a large number of actively replying users.</span>
+                        </div>
+                        <span class="value" id="value22">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="small-12 medium-12 large-12 columns">
+        <input class='tgl tgl-flip' id='filter_but' type='checkbox'>
+        <label class='tgl-btn' data-tg-off='Comments' data-tg-on='Users' for='filter_but'></label>
+    </div>
+</div>
+<div class="row fullWidth" style="display: none">
+    <div class="small-12 medium-12 large-12 columns" id="graph"></div>
+    <div class="small-12 medium-12 large-12 columns" id="network" oncontextmenu="return false;"></div>
+</div>
+
+<!-- JS -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.min.js"></script>
+<script src="js/jquery.easing.1.3.js"></script>
+<script src="js/jquery.contentcarousel.js"></script>
+<script src="netjs/sigma.core.js"></script>
+<script src="netjs/conrad.js"></script>
+<script src="netjs/sigma.utils.js"></script>
+<script src="netjs/sigma.settings.js"></script>
+<script src="netjs/sigma.classes.dispatcher.js"></script>
+<script src="netjs/sigma.classes.configurable.js"></script>
+<script src="netjs/sigma.classes.graph.js"></script>
+<script src="netjs/sigma.classes.camera.js"></script>
+<script src="netjs/sigma.classes.quad.js"></script>
+<script src="netjs/sigma.captors.mouse.js"></script>
+<script src="netjs/sigma.captors.touch.js"></script>
+<script src="netjs/sigma.renderers.canvas.js"></script>
+<script src="netjs/sigma.canvas.labels.def.js"></script>
+<script src="netjs/sigma.canvas.nodes.def.js"></script>
+<script src="netjs/sigma.canvas.edges.curve.js"></script>
+<script src="netjs/sigma.middlewares.rescale.js"></script>
+<script src="netjs/sigma.misc.bindEvents.js"></script>
+<script src="netjs/sigma.misc.drawHovers.js"></script>
+<script src="netjs/worker.js"></script>
+<script src="netjs/supervisor.js"></script>
+<script src="js/tab.js"></script>
+<script src="js/classie.js"></script>
+<script src="js/main.js"></script>
+
+
+<!-- END JS -->
+</body>
+</html>
